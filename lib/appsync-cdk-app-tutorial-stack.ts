@@ -42,6 +42,32 @@ export class AppsyncCdkAppTutorialStack extends cdk.Stack {
     })
 
     // Appsyncのデータソースとしてラムダ関数をセットする
-    const lambdaDataSource = api.addLambdaDataSource('lambdaDataSource', notesLambda)
+    const lambdaDS = api.addLambdaDataSource('lambdaDataSource', notesLambda)
+
+    // ラムダをGraphQLリゾルバにアタッチ
+    /**
+     * NOTE: Lambdaデータソースが作成されたので、データソースと対話するためのGraphQLオペレーション用のリゾルバを有効にする必要があります
+     * そのためには、Lambdaデータソースの定義の下に以下のコードを追加します。
+     */
+    lambdaDS.createResolver({
+      typeName: 'Query',
+      fieldName: 'getNoteById',
+    })
+    lambdaDS.createResolver({
+      typeName: 'Query',
+      fieldName: 'listNotes',
+    })
+    lambdaDS.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'createNote',
+    })
+    lambdaDS.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'deleteNote',
+    })
+    lambdaDS.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'updateNote',
+    })
   }
 }
