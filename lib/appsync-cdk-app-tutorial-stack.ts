@@ -69,5 +69,20 @@ export class AppsyncCdkAppTutorialStack extends cdk.Stack {
       typeName: 'Mutation',
       fieldName: 'updateNote',
     })
+
+    /**
+     * DynamoDB追加
+     */
+    const notesTable = new ddb.Table(this, 'CDKNotesTable', {
+      billingMode: ddb.BillingMode.PAY_PER_REQUEST,
+      partitionKey: {
+        name: 'id',
+        type: ddb.AttributeType.STRING,
+      },
+    })
+    // ラムダ関数がIAMを使ってDynamoDBにアクセスすることを許可する
+    notesTable.grantFullAccess(notesLambda)
+    // ラムダ関数で扱う環境変数を作成する
+    notesLambda.addEnvironment('NOTES_TABLE', notesTable.tableName)
   }
 }
